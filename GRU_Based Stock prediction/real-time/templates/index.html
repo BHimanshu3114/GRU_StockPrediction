@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Price Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f7f9fc;
+            color: #333;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        #price {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Real-Time Stock Price Viewer</h1>
+    <input type="text" id="companySymbol" placeholder="Enter Company Symbol">
+    <button onclick="getStockPrice()">Get Price</button>
+    <div id="price"></div>
+
+    <script>
+        function getStockPrice() {
+            const symbol = document.getElementById('companySymbol').value;
+            if (symbol === '') {
+                alert('Please enter a company symbol.');
+                return;
+            }
+            
+            fetch(`/get_stock_price?symbol=${symbol}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('price').innerText = data.error;
+                    } else {
+                        document.getElementById('price').innerText = `Current Price of ${data.symbol}: $${data.price}`;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('price').innerText = 'Error fetching data';
+                });
+        }
+
+        // Refresh the stock price every 10 seconds
+        setInterval(getStockPrice, 10000);
+    </script>
+</body>
+</html>
